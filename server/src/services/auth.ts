@@ -15,7 +15,7 @@ const secretKey = process.env.JWT_SECRET_KEY || 'supersecretkey';
 // ✅ Generate JWT Token
 export function signToken(username: string, email: string, _id: string): string {
   const payload = { username, email, _id };
-  return jwt.sign(payload, secretKey, { expiresIn: '1h' });
+  return jwt.sign(payload, secretKey, { expiresIn: '7d' });
 }
 
 // ✅ Express Middleware for Authentication

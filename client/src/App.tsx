@@ -12,12 +12,12 @@ const httpLink = createHttpLink({
 
 // Middleware to attach token to every request
 const authLink = setContext((_, { headers }) => {
-  const token = localStorage.getItem('id_token');
+  const token = localStorage.getItem("id_token");
   console.log('Attaching Token to Request:', token);
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : '',
+      authorization: token ? `Bearer ${token}` : "",
     },
   };
 });
