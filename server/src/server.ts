@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 import db from './config/connection.js';
 import routes from './routes/index.js';
 import { typeDefs, resolvers } from './schemas/index.js';
-import { authMiddleware } from './services/auth.js';
+import { authenticateToken } from './services/auth.js';
 
 dotenv.config();
 
@@ -16,12 +16,18 @@ const PORT = process.env.PORT || 3001;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors()); // Enable CORS for frontend communication
+app.use(authenticateToken); // ✅ Enable authentication middleware
+
+
 
 // Initialize Apollo Server
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: ({ req }: {req: express.Request }) => authMiddleware({ req }),
+  context: ({ req }: { req: express.Request }) => {
+    console.log('GraphQL Context - User:', req.user);
+    return { user: req.user };
+  } 
 });
 
 async function startApolloServer() {
