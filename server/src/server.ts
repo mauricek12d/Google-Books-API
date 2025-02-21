@@ -1,5 +1,6 @@
 import express, { Application } from 'express';
-import path from 'node:path';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { ApolloServer } from 'apollo-server-express';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -8,6 +9,9 @@ import routes from './routes/index.js';
 import { typeDefs, resolvers } from './schemas/index.js';
 import { authenticateToken } from './services/auth.js';
 import jwt from 'jsonwebtoken'; 
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
