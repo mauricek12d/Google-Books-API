@@ -37,13 +37,22 @@ const SavedBooks = () => {
 
   // Apollo Mutation to remove a saved book
   const [removeBook] = useMutation<RemoveBookResponse>(REMOVE_BOOK, {
-    update(cache: ApolloCache<any>, { data }: { data: RemoveBookResponse }) {
-      if (data?.removeBook) {
+    update(cache: ApolloCache<any>, result) {
+      if (!result.data || !result.data.removeBook) return;
+
+      const { removeBook } = result.data;
+
+      const existingUser = cache.readQuery<{ me: User }>({ query: GET_ME });
+      if (!existingUser || !existingUser.me) return; 
+      
+      const updatedBooks = existingUser.me.savedBooks.filter(
+        (book) => !removeBook.savedBooks.some((removed) => removed.bookId === book.bookId)
+      );
+
         cache.writeQuery({
           query: GET_ME,
-          data: { me: data.removeBook },
+          data: { me: { ...existingUser.me, savedBooks: updatedBooks, }, },
         });
-      }
     },
   });
 

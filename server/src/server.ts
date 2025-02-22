@@ -20,7 +20,7 @@ const PORT = process.env.PORT || 3001;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(cors()); // Enable CORS for frontend communication
+app.use(cors({origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true,})); // Enable CORS for frontend communication
 app.use(authenticateToken); // ✅ Enable authentication middleware
 
 const secretKey = process.env.JWT_SECRET_KEY || 'supersupersecretkey';
@@ -51,7 +51,8 @@ const server = new ApolloServer({
       console.warn("Invalid Token:", error);
       return { user: null };
     } 
-  }
+  },
+  persistedQueries: false,
 });
 
 async function startApolloServer() {
