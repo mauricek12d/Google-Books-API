@@ -85,6 +85,9 @@ Improve UI/UX styling.
 Implement advanced search filtering.
 Allow users to add personal notes to saved books.
 
+![Search Page](https://raw.githubusercontent.com/mauricek12d/Google-Books-API/main/assets/screenshots/homepage.png)
+
+
 🤝 Contributors
 Maurice Zuniga – github.com/mauricek12d
 
