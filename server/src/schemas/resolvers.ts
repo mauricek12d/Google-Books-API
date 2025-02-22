@@ -47,7 +47,21 @@ export const resolvers = {
       if (!user) {
         throw new AuthenticationError('Not authenticated');
       }
-      return await User.findByIdAndUpdate(
+
+      const updatedUser = await User.findByIdAndUpdate(
+        user._id,
+        { $addToSet: { savedBooks: input } },
+        { new: true, runValidators: true }
+      );
+
+      if (!updatedUser) {
+        throw new AuthenticationError('Could not save book');
+      }
+
+      return updatedUser;
+    },
+    
+    return await User.findByIdAndUpdate(
         user._id,
         { $addToSet: { savedBooks: input } },
         { new: true, runValidators: true }

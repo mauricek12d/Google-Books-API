@@ -34,6 +34,9 @@ export const SAVE_BOOK = gql`
         bookId
         title
         authors
+        description
+        image
+        link
       }
     }
   }

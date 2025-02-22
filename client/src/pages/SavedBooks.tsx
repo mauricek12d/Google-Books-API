@@ -1,4 +1,4 @@
-import { useQuery, useMutation, ApolloCache } from '@apollo/client';
+import { useQuery, useMutation, ApolloCache, FetchResult } from '@apollo/client';
 import { Container, Card, Button, Row, Col } from 'react-bootstrap';
 import { GET_ME } from '../graphql/queries';
 import { REMOVE_BOOK } from '../graphql/mutations';
@@ -24,42 +24,37 @@ interface User {
 
 // Define the structure for RemoveBookResponse
 interface RemoveBookResponse {
-  removeBook: {
-    _id: string;
-    savedBooks: Book[];
-  };
-}
+  removeBook: User;
+  }
 
 const SavedBooks = () => {
   // Apollo Query to fetch user data
-  const { loading, data } = useQuery<{ me: User }>(GET_ME);
+  const { loading, data, refetch } = useQuery<{ me: User }>(GET_ME);
   const userData = data?.me || { _id: '', username: '', email: '', savedBooks: [] };
 
   // Apollo Mutation to remove a saved book
   const [removeBook] = useMutation<RemoveBookResponse>(REMOVE_BOOK, {
-    update(cache: ApolloCache<any>, result) {
-      if (!result.data || !result.data.removeBook) return;
+    update(cache: ApolloCache<any>, { data }: FetchResult<RemoveBookResponse>) {
+      if (!data?.removeBook) return;
 
-      const { removeBook } = result.data;
-
-      const existingUser = cache.readQuery<{ me: User }>({ query: GET_ME });
-      if (!existingUser || !existingUser.me) return; 
-      
-      const updatedBooks = existingUser.me.savedBooks.filter(
-        (book) => !removeBook.savedBooks.some((removed) => removed.bookId === book.bookId)
-      );
-
-        cache.writeQuery({
-          query: GET_ME,
-          data: { me: { ...existingUser.me, savedBooks: updatedBooks, }, },
-        });
+    
+      cache.modify({
+        id: `User:${data.removeBook._id}`,
+        fields: {
+          savedBooks(existingBooksRefs = [], { readField }) {
+            return existingBooksRefs.filter(
+              (bookRef: any) => readField('bookId', bookRef) !== <data value="" className="removeBook _id"></data>
+            );
+          },
+        },
+      });
     },
   });
 
   // Handle deleting a book
   const handleDeleteBook = async (bookId: string) => {
     const token = Auth.loggedIn() ? Auth.getToken() : null;
-    if (!token) return false;
+    if (!token) return;
 
     try {
       const { data } = await removeBook({
@@ -68,9 +63,10 @@ const SavedBooks = () => {
 
       if (data?.removeBook) {
         removeBookId(bookId);
+        await refetch();
       }
     } catch (err) {
-      console.error(err);
+      console.error('Error deleting book:',err);
     }
   };
 
