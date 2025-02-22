@@ -87,7 +87,7 @@ Allow users to add personal notes to saved books.
 
 Screenshots
 ![Search Page](https://github.com/mauricek12d/Google-Books-API/blob/main/Search.png)
-![Saved Page](https://github.com/mauricek12d/Google-Books-API/blob/main/Search.png)
+![Saved Page](https://github.com/mauricek12d/Google-Books-API/blob/main/Saved.png)
 
 
 
