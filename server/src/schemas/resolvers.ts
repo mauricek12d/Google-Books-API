@@ -61,12 +61,6 @@ export const resolvers = {
       return updatedUser;
     },
     
-    return await User.findByIdAndUpdate(
-        user._id,
-        { $addToSet: { savedBooks: input } },
-        { new: true, runValidators: true }
-      );
-    },
     removeBook: async (_parent: any, { bookId }: {bookId: string}, { user }: any) => {
       if (!user) {
         throw new AuthenticationError('Not authenticated');
