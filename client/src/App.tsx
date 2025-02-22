@@ -5,13 +5,15 @@ import { setContext } from '@apollo/client/link/context';
 
 import Navbar from './components/Navbar';
 
-// Set up Apollo Client
+// Set up Apollo Client with dynamic API URL
 const httpLink = createHttpLink({
-  uri: 'http://localhost:3001/graphql', // Server URL (must be absolute)
+  uri: process.env.NODE_ENV === 'production' 
+    ? 'https://google-books-api-3prl.onrender.com/graphql' // The Render URL
+    : 'http://localhost:3001/graphql', // The Local URL
 });
 
 // Middleware to attach token to every request
-const authLink = setContext((_, { headers }) => {
+const authLink = setContext((_, { headers = {} }) => {
   const token = localStorage.getItem("id_token");
   console.log('Attaching Token to Request:', token);
   return {
